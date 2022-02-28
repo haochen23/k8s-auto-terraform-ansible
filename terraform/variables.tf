@@ -11,7 +11,7 @@ variable "vnet_cidr" {
 }
 
 variable "subnet1_cidr" {
-    defualt = ["10.240.0.0/24"]
+    default = ["10.240.0.0/24"]
 }
 
 variable "env_tag" {
