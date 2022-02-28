@@ -1,0 +1,9 @@
+[ubuntu_kube_masters]
+atvmscongd01
+
+[ubuntu_kube_workers]
+atvmscond01
+
+[ubuntu_nodes:children]
+ubuntu_kube_masters
+ubuntu_kube_workers
