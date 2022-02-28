@@ -1,7 +1,13 @@
-output "kmaster0" {
-  value = azurerm_linux_virtual_machine.kmaster0.public_ip_address
+output "pips" {
+  value = [ 
+    for vm in azurerm_linux_virtual_machine.vms : vm.public_ip_address
+  ]
+    # value = azurerm_linux_virtual_machine.vms
+    # sensitive = true
 }
 
 output "vm_user" {
-    value = azurerm_linux_virtual_machine.kmaster0.admin_username
+    value = [
+        for vm in azurerm_linux_virtual_machine.vms : vm.admin_username
+    ]
 }

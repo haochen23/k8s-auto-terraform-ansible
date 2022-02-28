@@ -1,5 +1,5 @@
 - name: Manage kubernetes servers
-  hosts: kmasters
+  hosts: all
   remote_user: root
 
   tasks:

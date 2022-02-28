@@ -34,8 +34,9 @@ resource "azurerm_subnet" "subnet1" {
 }
 
 # Create public IPs
-resource "azurerm_public_ip" "pip1" {
-    name                         = "pip1"
+resource "azurerm_public_ip" "pips" {
+    for_each                     = toset(var.vm_names)
+    name                         = each.value
     location                     = "eastus"
     resource_group_name          = azurerm_resource_group.rg.name 
     allocation_method            = "Dynamic"
@@ -64,13 +65,26 @@ resource "azurerm_network_security_group" "nsg1" {
         destination_address_prefix = "*"
     }
 
+    security_rule {
+        name                       = "allow-k8s-api-server"
+        priority                   = 1002
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "Tcp"
+        source_port_range          = "*"
+        destination_port_range     = "6443"
+        source_address_prefix      = "*"
+        destination_address_prefix = "*"
+    }
+
     tags = {
         environment = var.env_tag
     }
 }
 
-resource "azurerm_network_interface" "nic1" {
-  name                = "nic1"
+resource "azurerm_network_interface" "nics" {
+  for_each            = toset(var.vm_names)
+  name                = each.value
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
@@ -78,27 +92,30 @@ resource "azurerm_network_interface" "nic1" {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.subnet1.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.pip1.id
+    public_ip_address_id          = azurerm_public_ip.pips[each.key].id
   }
 }
 
 
 # Connect the security group to the network interface
 resource "azurerm_network_interface_security_group_association" "nsg_associate" {
-    network_interface_id      = azurerm_network_interface.nic1.id
-    network_security_group_id = azurerm_network_security_group.nsg1.id
+
+  for_each = toset(var.vm_names)    
+  network_interface_id =  azurerm_network_interface.nics[each.value].id
+  network_security_group_id = azurerm_network_security_group.nsg1.id    
 }
 
 
-resource "azurerm_linux_virtual_machine" "kmaster0" {
-  name                = "kmaster0"
+resource "azurerm_linux_virtual_machine" "vms" {
+  for_each            = toset(var.vm_names)
+  name                = each.value
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   size                = "Standard_D2_v2"
   admin_username      = "adminuser"
   disable_password_authentication = true
   network_interface_ids = [
-    azurerm_network_interface.nic1.id,
+    azurerm_network_interface.nics[each.key].id,
   ]
 
   admin_ssh_key {
