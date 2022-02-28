@@ -1,17 +1,17 @@
 - name: Manage kubernetes servers
-  hosts: ubuntu_kube_workers
+  hosts: kmasters
   remote_user: root
 
   tasks:
-  - name: Basic host setup
-    import_tasks: "../tasks/basic.yml"
+    - name: Basic host setup
+      import_tasks: "../tasks/basic.yaml"
 
-  - name: Setup docker 
-    import_tasks: "../tasks/docker.yml"
+    - name: Setup docker
+      import_tasks: "../tasks/docker.yaml"
 
-  - name: Setup kubernetes
-    import_tasks: "../tasks/kubernetes.yml"
+    - name: Setup kubernetes
+      import_tasks: "../tasks/kubernetes.yaml"
 
   handlers:
-  - name: Basic Handler
-    import_tasks: "../handlers/basic.yml"
+    - name: Basic Handler
+      import_tasks: "../handlers/basic.yaml"
