@@ -2,6 +2,10 @@ variable "resource_group_name" {
   default = "kubernetes"
 }
 
+variable "location" {
+  default = "eastus"
+}
+
 variable "vnet_name" {
     default = "kubernetes-vnet"
 }
@@ -11,7 +15,7 @@ variable "vnet_cidr" {
 }
 
 variable "subnet1_cidr" {
-    default = ["10.240.0.0/24"]
+    default = ["10.0.0.0/24"]
 }
 
 variable "env_tag" {

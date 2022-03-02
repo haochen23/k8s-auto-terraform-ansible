@@ -1,7 +1,8 @@
 # on first master node
-kubeadm init --apiserver-advertise-address=10.240.0.7 --control-plane-endpoint="40.117.250.63:6443" --pod-network-cidr=10.200.0.0/16 --ignore-preflight-errors=all --upload-certs
+kubeadm init --apiserver-advertise-address=10.0.0.7 --control-plane-endpoint="40.117.250.63:6443" --pod-network-cidr=10.240.0.0/16 --ignore-preflight-errors=all --upload-certs
 
-kubectl --kubeconfig=/etc/kubernetes/admin.conf create -f https://docs.projectcalico.org/manifests/calico.yaml
+# kubectl --kubeconfig=/etc/kubernetes/admin.conf create -f https://docs.projectcalico.org/manifests/calico.yaml
+kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
 
 
 # on workers

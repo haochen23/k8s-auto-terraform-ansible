@@ -13,7 +13,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
-  location = "eastus"
+  location = var.localtion
   tags = {
     Environment = var.env_tag
   }
@@ -37,7 +37,7 @@ resource "azurerm_subnet" "subnet1" {
 resource "azurerm_public_ip" "pips" {
     for_each                     = toset(var.vm_names)
     name                         = each.value
-    location                     = "eastus"
+    location                     = var.location
     resource_group_name          = azurerm_resource_group.rg.name 
     allocation_method            = "Dynamic"
 
@@ -50,7 +50,7 @@ resource "azurerm_public_ip" "pips" {
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "nsg1" {
     name                = "nsg1"
-    location            = "eastus"
+    location            = var.location
     resource_group_name = azurerm_resource_group.rg.name
 
     security_rule {
